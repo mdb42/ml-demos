@@ -1,6 +1,10 @@
 """
 Author: Matthew Del Branson
 Date: 2024-01-01
+
+Simple Convolutional Network is a convolutional neural network with one convolutional layer, 
+one pooling layer, and one fully connected layer and is trained on the MNIST dataset.
+
 """
 
 import torch
@@ -26,8 +30,6 @@ os.makedirs(figures_directory, exist_ok=True)
 os.makedirs(models_directory, exist_ok=True)
 
 # Define hyperparameters
-number_of_input_features = 784 # 28 x 28 = 784
-hidden_layer_size = 100 # Number of neurons in the hidden layer
 number_of_output_classes = 10 # Number of classes in the output layer
 learning_rate = 0.001 # Learning rate
 batch_size = 64 # Number of samples per batch
@@ -58,48 +60,56 @@ train_dataset, val_dataset = random_split(dataset, [num_train, num_val])
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 
-
-class SimpleNeuralNet(nn.Module):
-    """Defines the SimpleNeuralNet Class:
+class SimpleConvolutionalNet(nn.Module):
+    """Defines the SimpleConvolutionalNet Class:
         Creates a class that inherits from nn.Module.
         Defines the layers in the __init__ method.
         Implements the forward pass in the forward method.
-        
+        Implements the predict method to predict the class of the input data.
+
         Args:
             nn (Module): Inherits from nn.Module.
 
         Returns:
-            SimpleNeuralNet: A neural network with one hidden layer.
-        
-        """
-    
+            SimpleConvolutionalNet: An instance of SimpleConvolutionalNet.
+
+    """
     def __init__(self):
         """Initializes the neural network.
 
         Args:
-            self (SimpleNeuralNet): An instance of SimpleNeuralNet.
-        
+            self (SimpleConvolutionalNet): An instance of SimpleConvolutionalNet.
+
         """
-        super(SimpleNeuralNet, self).__init__()
-        # Define layers
-        self.fc1 = nn.Linear(in_features=number_of_input_features, out_features=hidden_layer_size) # First layer
-        self.relu = nn.ReLU() # Non-linearity
-        self.fc2 = nn.Linear(in_features=hidden_layer_size, out_features=number_of_output_classes) # Second layer
+        super(SimpleConvolutionalNet, self).__init__()
+        # Convolutional layer (sees 28x28x1 image tensor)
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, stride=1, padding=2)
+        # Activation function
+        self.relu = nn.ReLU()
+        # Pooling Layer
+        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
+        # Fully connected layer (sees 14x14x32 image tensor after pooling)
+        self.fc1 = nn.Linear(14*14*32, 10)  # 10 output classes for digits 0-9
 
     def forward(self, x):
         """Implements the forward pass.
 
         Args:
             x (Tensor): Input data.
-
+            
         Returns:
             Tensor: The output of the network.
-        
+
         """
-        x = x.view(x.size(0), -1)  # Flatten the input
-        x = self.fc1(x)  # First layer
-        x = self.relu(x)  # Non-linearity
-        x = self.fc2(x)  # Second layer
+        # Convolutional layer
+        x = self.conv1(x)
+        x = self.relu(x)
+        # Pooling layer
+        x = self.maxpool(x)
+        # Flatten the tensor
+        x = x.view(-1, 14*14*32)  # Flatten it out for the fully connected layer
+        # Fully connected layer
+        x = self.fc1(x)
         return x
 
     def predict(self, x):
@@ -117,6 +127,15 @@ class SimpleNeuralNet(nn.Module):
             return torch.argmax(x, dim=1) # Return the class with the highest probability
 
 def train_and_validate(model, loss_function, optimizer, epochs=10):
+    """Trains and validates the model.
+
+    Args:
+        model (SimpleConvolutionalNet): The neural network model.
+        loss_function (nn.CrossEntropyLoss): The loss function.
+        optimizer (optim.Adam): The optimizer.
+        epochs (int): Number of epochs to train the model.
+    
+    """
     try:
         # Training loop
         for epoch in range(epochs):
@@ -227,14 +246,14 @@ def plot_confusion_matrix(cm):
     plt.show()
 
 # Instantiate the network
-model = SimpleNeuralNet()
+model = SimpleConvolutionalNet()
 
 # Define loss function and optimizer
 criterion = nn.CrossEntropyLoss()  # For a classification problem
 optimizer = optim.Adam(model.parameters(), lr=learning_rate) # Adam optimizer
 
 # Saving the model with versioning
-model_filename = f"simple_nn_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pth"
+model_filename = f"simple_cnn_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pth"
 model_path = os.path.join(models_directory, model_filename)
 torch.save(model.state_dict(), model_path)
 logging.info(f"Model saved to {model_path}")
@@ -260,6 +279,5 @@ cm = confusion_matrix(all_labels, all_preds)
 plot_confusion_matrix(cm)
 
 print('Finished Training')
-torch.save(model.state_dict(), 'model.pth')
 
 
