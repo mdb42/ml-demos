@@ -22,20 +22,13 @@ from datetime import datetime
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+session_start_time = datetime.now().strftime('%Y%m%d_%H%M%S')
 
 # Check for the existence of the directory to save figures and models
 figures_directory = "figures"
 models_directory = "models"
 os.makedirs(figures_directory, exist_ok=True)
 os.makedirs(models_directory, exist_ok=True)
-
-# Define hyperparameters
-number_of_input_features = 784 # 28 x 28 = 784
-hidden_layer_size = 100 # Number of neurons in the hidden layer
-number_of_output_classes = 10 # Number of classes in the output layer
-learning_rate = 0.001 # Learning rate
-batch_size = 64 # Number of samples per batch
-num_epochs = 10 # Number of epochs
 
 # Initialize lists to store loss and accuracy values
 train_losses = []
@@ -58,9 +51,18 @@ num_val = len(dataset) - num_train   # e.g., 20% of the dataset
 # Split the dataset
 train_dataset, val_dataset = random_split(dataset, [num_train, num_val])
 
+# Define hyperparameters
+number_of_input_features = 784 # 28 x 28 = 784
+hidden_layer_size = 100 # Number of neurons in the hidden layer
+number_of_output_classes = 10 # Number of classes in the output layer
+learning_rate = 0.001 # Learning rate
+batch_size = 64 # Number of samples per batch
+num_epochs = 10 # Number of epochs
+
 # Define data loaders for training and validation
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
+
 
 
 class SimpleFeedForwardNet(nn.Module):
@@ -199,7 +201,7 @@ def plot_training_and_validation_loss(train_losses, val_losses):
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.legend()
-    loss_fig_path = os.path.join(figures_directory, f"loss_plot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
+    loss_fig_path = os.path.join(figures_directory, f"ffnn_loss_plot_{session_start_time}.png")
     plt.savefig(loss_fig_path)
     logging.info(f"Loss plot saved to {loss_fig_path}")
     plt.show()
@@ -217,7 +219,7 @@ def plot_validation_accuracy(val_accuracies):
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
     plt.legend()
-    acc_fig_path = os.path.join(figures_directory, f"accuracy_plot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
+    acc_fig_path = os.path.join(figures_directory, f"ffnn_accuracy_plot_{session_start_time}.png")
     plt.savefig(acc_fig_path)
     logging.info(f"Accuracy plot saved to {acc_fig_path}")
     plt.show()
@@ -235,7 +237,7 @@ def plot_confusion_matrix(cm):
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.title("Confusion Matrix")
-    cm_fig_path = os.path.join(figures_directory, f"confusion_matrix_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
+    cm_fig_path = os.path.join(figures_directory, f"ffnn_confusion_matrix_{session_start_time}.png")
     plt.savefig(cm_fig_path)
     logging.info(f"Confusion matrix saved to {cm_fig_path}")
     plt.show()
@@ -248,7 +250,7 @@ criterion = nn.CrossEntropyLoss()  # For a classification problem
 optimizer = optim.Adam(model.parameters(), lr=learning_rate) # Adam optimizer
 
 # Saving the model with versioning
-model_filename = f"simple_ffnn_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pth"
+model_filename = f"simple_ffnn_model_{session_start_time}.pth"
 model_path = os.path.join(models_directory, model_filename)
 torch.save(model.state_dict(), model_path)
 logging.info(f"Model saved to {model_path}")
@@ -273,6 +275,6 @@ with torch.no_grad():
 cm = confusion_matrix(all_labels, all_preds)
 plot_confusion_matrix(cm)
 
-print('Finished Training')
+logging.info("Training complete.")
 
 
