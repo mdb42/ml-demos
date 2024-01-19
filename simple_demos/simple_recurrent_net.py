@@ -23,8 +23,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 session_start_time = datetime.now().strftime('%Y%m%d_%H%M%S')
 
 # Check for the existence of the directory to save figures and models
-figures_directory = "figures"
-models_directory = "models"
+figures_directory = "simple_demos/figures"
+models_directory = "simple_demos/models"
 os.makedirs(figures_directory, exist_ok=True)
 os.makedirs(models_directory, exist_ok=True)
 
@@ -47,7 +47,7 @@ def clean_text(file_path):
     
     return content
 
-text_file_path = 'data/local/input.txt'
+text_file_path = 'resources/text/input.txt'
 text = clean_text(text_file_path)
 
 # Create a dictionary of characters and indices
@@ -65,7 +65,7 @@ output_size = len(char2int)
 n_layers = 1
 batch_size = 1
 seq_length = 50  # sequence length
-n_epochs = 100
+n_epochs = 10
 learning_rate = 0.01
 
 # Define the model
@@ -186,7 +186,7 @@ def plot_training_and_validation_loss(train_losses, val_losses):
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.legend()
-    loss_fig_path = os.path.join(figures_directory, f"rnn_loss_plot_{session_start_time}.png")
+    loss_fig_path = os.path.join(figures_directory, f"simple_rnn_loss_plot_{session_start_time}.png")
     plt.savefig(loss_fig_path)
     logging.info(f"Loss plot saved to {loss_fig_path}")
     plt.show()

@@ -1,0 +1,3 @@
+TITLE = "Scribble Vision"
+VERSION = "0.0.1"
+FRAMES_PER_SECOND = 60

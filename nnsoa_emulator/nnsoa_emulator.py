@@ -1,15 +1,15 @@
 import sys
-import nnsoa_constants
-from gui import gui_utils, nnsoa
+import constants
+from gui import gui_utils, nnsoa_emulator_window
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6.QtGui import QIcon, QIntValidator, QTextCursor
+from PyQt6.QtGui import QIcon, QIntValidator
 from PyQt6.QtCore import QTimer
 
 import os
 import logging
 
-class NNSOAEmulator(QMainWindow, nnsoa.Ui_MainWindow):
+class NNSOAEmulator(QMainWindow, nnsoa_emulator_window.Ui_MainWindow):
     """Main window of the NNSOA Emulator."""
 
     def __init__(self, parent=None):
@@ -17,52 +17,50 @@ class NNSOAEmulator(QMainWindow, nnsoa.Ui_MainWindow):
         logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
-                    filename='nnsoa.log',
+                    filename='nnsoa_emulator/nnsoa_emulator.log',
                     filemode='w')
 
         # Test the logger
         logging.info('Program initialized.')
 
-        # Let's initialize the filepath as the current directory
+        # Initialize the filepath as the current directory
         self.filepath = os.getcwd()
 
         # Hyperparameters
-        self.inputs_count = nnsoa_constants.DEFAULT_INPUT_COUNT
-        self.outputs_count = nnsoa_constants.DEFAULT_OUTPUT_COUNT
-        self.hidden_nodes_count = nnsoa_constants.DEFAULT_HIDDEN_NODES_COUNT
-        self.hidden_gen_count = nnsoa_constants.DEFAULT_HIDDEN_GEN_COUNT
-        self.generations_count = nnsoa_constants.DEFAULT_GENERATIONS_COUNT
-        self.training_obs_count = nnsoa_constants.DEFAULT_TRAINING_OBS_COUNT
+        self.inputs_count = constants.DEFAULT_INPUT_COUNT
+        self.outputs_count = constants.DEFAULT_OUTPUT_COUNT
+        self.hidden_nodes_count = constants.DEFAULT_HIDDEN_NODES_COUNT
+        self.hidden_gen_count = constants.DEFAULT_HIDDEN_GEN_COUNT
+        self.generations_count = constants.DEFAULT_GENERATIONS_COUNT
+        self.training_obs_count = constants.DEFAULT_TRAINING_OBS_COUNT
+        self.population_count = constants.DEFAULT_POPULATION_COUNT
+        self.jump_count = constants.DEFAULT_JUMP_COUNT
 
         # Flags
-        self.reduce_check = nnsoa_constants.DEFAULT_REDUCE_CHECK
-        self.classification_check = nnsoa_constants.DEFAULT_CLASSIFICATION_CHECK
-        self.logistic_function_check = nnsoa_constants.DEFAULT_LOGISTIC_FUNCTION_CHECK
-        self.more_check = nnsoa_constants.DEFAULT_MORE_CHECK
-        self.converge_check = nnsoa_constants.DEFAULT_CONVERGE_CHECK
-
-        # Aux counts
-        self.population_count = nnsoa_constants.DEFAULT_POPULATION_COUNT
-        self.jump_count = nnsoa_constants.DEFAULT_JUMP_COUNT
+        self.reduce_check = constants.DEFAULT_REDUCE_CHECK
+        self.classification_check = constants.DEFAULT_CLASSIFICATION_CHECK
+        self.logistic_function_check = constants.DEFAULT_LOGISTIC_FUNCTION_CHECK
+        self.more_check = constants.DEFAULT_MORE_CHECK
+        self.converge_check = constants.DEFAULT_CONVERGE_CHECK
 
         # Files
-        self.input_file = nnsoa_constants.DEFAULT_INPUT_FILE
-        self.error_file = nnsoa_constants.DEFAULT_ERROR_FILE
-        self.config_file = nnsoa_constants.DEFAULT_CONFIG_FILE
-        self.weights_file = nnsoa_constants.DEFAULT_WEIGHTS_FILE
+        self.input_file = constants.DEFAULT_INPUT_FILE
+        self.error_file = constants.DEFAULT_ERROR_FILE
+        self.config_file = constants.DEFAULT_CONFIG_FILE
+        self.weights_file = constants.DEFAULT_WEIGHTS_FILE
         
         # Testing
-        self.testing_obs_count = nnsoa_constants.DEFAULT_TESTING_OBS_COUNT
-        self.test_file = nnsoa_constants.DEFAULT_TEST_FILE
+        self.testing_obs_count = constants.DEFAULT_TESTING_OBS_COUNT
+        self.test_file = constants.DEFAULT_TEST_FILE
 
         # Output
-        self.output_file = nnsoa_constants.DEFAULT_OUTPUT_FILE
+        self.output_file = constants.DEFAULT_OUTPUT_FILE
 
         # Initialize a QTimer for continuous constant advancement
         self.total_frames = 0
         self.frame_timer = QTimer(self)
         self.frame_timer.timeout.connect(self.advance)
-        self.frame_timer.start(int(1000/nnsoa_constants.FRAMES_PER_SECOND))
+        self.frame_timer.start(int(1000/constants.FRAMES_PER_SECOND))
 
         self.setupUi(self)
         self.initialize_gui()
@@ -91,7 +89,7 @@ class NNSOAEmulator(QMainWindow, nnsoa.Ui_MainWindow):
 
     def setup_window(self):
         """ Setup the main window."""
-        self.setWindowTitle(f"{nnsoa_constants.TITLE} {nnsoa_constants.VERSION}")
+        self.setWindowTitle(f"{constants.TITLE} {constants.VERSION}")
         self.setWindowIcon(QIcon(gui_utils.load_icon("application-icon.ico")))
 
     def on_exit(self):
@@ -104,48 +102,48 @@ class NNSOAEmulator(QMainWindow, nnsoa.Ui_MainWindow):
         try:
             self.inputs_count = int(self.inputs_line_edit.text())
         except ValueError:
-            self.inputs_count = nnsoa_constants.DEFAULT_INPUT_COUNT
-            self.inputs_line_edit.setText(str(nnsoa_constants.DEFAULT_INPUT_COUNT))
+            self.inputs_count = constants.DEFAULT_INPUT_COUNT
+            self.inputs_line_edit.setText(str(constants.DEFAULT_INPUT_COUNT))
             self.statusbar.showMessage("Invalid input for inputs count. Reverting to default.")
             
     def update_outputs_count(self):
         try:
             self.outputs_count = int(self.outputs_line_edit.text())
         except ValueError:
-            self.outputs_count = nnsoa_constants.DEFAULT_OUTPUT_COUNT
-            self.outputs_line_edit.setText(str(nnsoa_constants.DEFAULT_OUTPUT_COUNT))
+            self.outputs_count = constants.DEFAULT_OUTPUT_COUNT
+            self.outputs_line_edit.setText(str(constants.DEFAULT_OUTPUT_COUNT))
             self.statusbar.showMessage("Invalid input for outputs count. Reverting to default.")
 
     def update_hidden_nodes_count(self):
         try:
             self.hidden_nodes_count = int(self.hidden_nodes_line_edit.text())
         except ValueError:
-            self.hidden_nodes_count = nnsoa_constants.DEFAULT_HIDDEN_NODES_COUNT
-            self.hidden_nodes_line_edit.setText(str(nnsoa_constants.DEFAULT_HIDDEN_NODES_COUNT))
+            self.hidden_nodes_count = constants.DEFAULT_HIDDEN_NODES_COUNT
+            self.hidden_nodes_line_edit.setText(str(constants.DEFAULT_HIDDEN_NODES_COUNT))
             self.statusbar.showMessage("Invalid input for hidden nodes count. Reverting to default.")
 
     def update_hidden_gen_count(self):
         try:
             self.hidden_gen_count = int(self.hidden_gen_line_edit.text())
         except ValueError:
-            self.hidden_gen_count = nnsoa_constants.DEFAULT_HIDDEN_GEN_COUNT
-            self.hidden_gen_line_edit.setText(str(nnsoa_constants.DEFAULT_HIDDEN_GEN_COUNT))
+            self.hidden_gen_count = constants.DEFAULT_HIDDEN_GEN_COUNT
+            self.hidden_gen_line_edit.setText(str(constants.DEFAULT_HIDDEN_GEN_COUNT))
             self.statusbar.showMessage("Invalid input for hidden gen count. Reverting to default.")
 
     def update_generations_count(self):
         try:
             self.generations_count = int(self.generations_line_edit.text())
         except ValueError:
-            self.generations_count = nnsoa_constants.DEFAULT_GENERATIONS_COUNT
-            self.generations_line_edit.setText(str(nnsoa_constants.DEFAULT_GENERATIONS_COUNT))
+            self.generations_count = constants.DEFAULT_GENERATIONS_COUNT
+            self.generations_line_edit.setText(str(constants.DEFAULT_GENERATIONS_COUNT))
             self.statusbar.showMessage("Invalid input for generations count. Reverting to default.")
 
     def update_training_obs_count(self):
         try:
             self.training_obs_count = int(self.training_obs_line_edit.text())
         except ValueError:
-            self.training_obs_count = nnsoa_constants.DEFAULT_TRAINING_OBS_COUNT
-            self.training_obs_line_edit.setText(str(nnsoa_constants.DEFAULT_TRAINING_OBS_COUNT))
+            self.training_obs_count = constants.DEFAULT_TRAINING_OBS_COUNT
+            self.training_obs_line_edit.setText(str(constants.DEFAULT_TRAINING_OBS_COUNT))
             self.statusbar.showMessage("Invalid input for training obs count. Reverting to default.")
 
     def update_reduce_check(self):
@@ -167,16 +165,16 @@ class NNSOAEmulator(QMainWindow, nnsoa.Ui_MainWindow):
         try:
             self.population_count = int(self.population_line_edit.text())
         except ValueError:
-            self.population_count = nnsoa_constants.DEFAULT_POPULATION_COUNT
-            self.population_line_edit.setText(str(nnsoa_constants.DEFAULT_POPULATION_COUNT))
+            self.population_count = constants.DEFAULT_POPULATION_COUNT
+            self.population_line_edit.setText(str(constants.DEFAULT_POPULATION_COUNT))
             self.statusbar.showMessage("Invalid input for population count. Reverting to default.")
 
     def update_jump_count(self):
         try:
             self.jump_count = int(self.jump_line_edit.text())
         except ValueError:
-            self.jump_count = nnsoa_constants.DEFAULT_JUMP_COUNT
-            self.jump_line_edit.setText(str(nnsoa_constants.DEFAULT_JUMP_COUNT))
+            self.jump_count = constants.DEFAULT_JUMP_COUNT
+            self.jump_line_edit.setText(str(constants.DEFAULT_JUMP_COUNT))
             self.statusbar.showMessage("Invalid input for jump count. Reverting to default.")
 
     def update_input_file(self):

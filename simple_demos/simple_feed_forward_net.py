@@ -25,8 +25,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 session_start_time = datetime.now().strftime('%Y%m%d_%H%M%S')
 
 # Check for the existence of the directory to save figures and models
-figures_directory = "figures"
-models_directory = "models"
+figures_directory = "simple_demos/figures"
+models_directory = "simple_demos/models"
 os.makedirs(figures_directory, exist_ok=True)
 os.makedirs(models_directory, exist_ok=True)
 
@@ -201,7 +201,7 @@ def plot_training_and_validation_loss(train_losses, val_losses):
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.legend()
-    loss_fig_path = os.path.join(figures_directory, f"ffnn_loss_plot_{session_start_time}.png")
+    loss_fig_path = os.path.join(figures_directory, f"simple_ffnn_loss_plot_{session_start_time}.png")
     plt.savefig(loss_fig_path)
     logging.info(f"Loss plot saved to {loss_fig_path}")
     plt.show()
@@ -219,7 +219,7 @@ def plot_validation_accuracy(val_accuracies):
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
     plt.legend()
-    acc_fig_path = os.path.join(figures_directory, f"ffnn_accuracy_plot_{session_start_time}.png")
+    acc_fig_path = os.path.join(figures_directory, f"simple_ffnn_accuracy_plot_{session_start_time}.png")
     plt.savefig(acc_fig_path)
     logging.info(f"Accuracy plot saved to {acc_fig_path}")
     plt.show()
@@ -237,7 +237,7 @@ def plot_confusion_matrix(cm):
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.title("Confusion Matrix")
-    cm_fig_path = os.path.join(figures_directory, f"ffnn_confusion_matrix_{session_start_time}.png")
+    cm_fig_path = os.path.join(figures_directory, f"simple_ffnn_confusion_matrix_{session_start_time}.png")
     plt.savefig(cm_fig_path)
     logging.info(f"Confusion matrix saved to {cm_fig_path}")
     plt.show()

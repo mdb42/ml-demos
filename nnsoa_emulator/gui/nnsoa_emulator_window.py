@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'gui\nnsoa.ui'
+# Form implementation generated from reading ui file 'nnsoa_emulator\gui\nnsoa_emulator_window.ui'
 #
 # Created by: PyQt6 UI code generator 6.6.1
 #
@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(587, 517)
+        MainWindow.resize(581, 644)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.centralwidget)
@@ -25,6 +25,9 @@ class Ui_MainWindow(object):
         self.top_splitter_panel = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.top_splitter_panel.setContentsMargins(0, 0, 0, 0)
         self.top_splitter_panel.setObjectName("top_splitter_panel")
+        self.filepath_label = QtWidgets.QLabel(parent=self.gridLayoutWidget)
+        self.filepath_label.setObjectName("filepath_label")
+        self.top_splitter_panel.addWidget(self.filepath_label, 1, 0, 1, 1)
         self.top_layout = QtWidgets.QHBoxLayout()
         self.top_layout.setObjectName("top_layout")
         self.top_left_layout = QtWidgets.QVBoxLayout()
@@ -262,9 +265,11 @@ class Ui_MainWindow(object):
         self.files_layout.addLayout(self.output_file_layout)
         self.top_layout.addLayout(self.files_layout)
         self.top_splitter_panel.addLayout(self.top_layout, 0, 0, 1, 1)
-        self.filepath_label = QtWidgets.QLabel(parent=self.gridLayoutWidget)
-        self.filepath_label.setObjectName("filepath_label")
-        self.top_splitter_panel.addWidget(self.filepath_label, 1, 0, 1, 1)
+        self.line_2 = QtWidgets.QFrame(parent=self.gridLayoutWidget)
+        self.line_2.setFrameShape(QtWidgets.QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.line_2.setObjectName("line_2")
+        self.top_splitter_panel.addWidget(self.line_2, 2, 0, 1, 1)
         self.gridLayoutWidget_2 = QtWidgets.QWidget(parent=self.splitter)
         self.gridLayoutWidget_2.setObjectName("gridLayoutWidget_2")
         self.bottom_splitter_panel = QtWidgets.QGridLayout(self.gridLayoutWidget_2)
@@ -272,11 +277,16 @@ class Ui_MainWindow(object):
         self.bottom_splitter_panel.setObjectName("bottom_splitter_panel")
         self.output_browser = QtWidgets.QTextBrowser(parent=self.gridLayoutWidget_2)
         self.output_browser.setObjectName("output_browser")
-        self.bottom_splitter_panel.addWidget(self.output_browser, 0, 0, 1, 1)
+        self.bottom_splitter_panel.addWidget(self.output_browser, 1, 0, 1, 1)
+        self.line = QtWidgets.QFrame(parent=self.gridLayoutWidget_2)
+        self.line.setFrameShape(QtWidgets.QFrame.Shape.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
+        self.line.setObjectName("line")
+        self.bottom_splitter_panel.addWidget(self.line, 0, 0, 1, 1)
         self.gridLayout_3.addWidget(self.splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 587, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 581, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(parent=self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -295,6 +305,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.filepath_label.setText(_translate("MainWindow", "File Path:"))
         self.inputs_label.setText(_translate("MainWindow", "Inputs"))
         self.outputs_label.setText(_translate("MainWindow", "Outputs"))
         self.hidden_nodes_label.setText(_translate("MainWindow", "Hidden Nodes"))
@@ -317,7 +328,6 @@ class Ui_MainWindow(object):
         self.config_file_label.setText(_translate("MainWindow", "Config File"))
         self.weights_file_label.setText(_translate("MainWindow", "Weights File"))
         self.output_file_label.setText(_translate("MainWindow", "Output File"))
-        self.filepath_label.setText(_translate("MainWindow", "File Path:"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
 
