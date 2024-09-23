@@ -1,6 +1,6 @@
 """
 Author: Matthew Del Branson
-Date: 2024-01-01
+Date: 2024-09-22
 
 Simple Neural Network is a feedforward neural network with one hidden layer 
 and is trained on the MNIST dataset.

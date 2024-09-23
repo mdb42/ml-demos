@@ -1,6 +1,6 @@
 """
 Author: Matthew Del Branson
-Date: 2024-01-02
+Date: 2024-09-22
 
 Simple Recurrent Network is a recurrent neural network with one recurrent layer and is trained
 on the text contained in the input.txt file and generates text by predicting the next character.

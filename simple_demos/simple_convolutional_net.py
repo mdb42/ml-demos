@@ -1,6 +1,6 @@
 """
 Author: Matthew Del Branson
-Date: 2024-01-01
+Date: 2024-09-22
 
 Simple Convolutional Network is a convolutional neural network with one convolutional layer, 
 one pooling layer, and one fully connected layer and is trained on the MNIST dataset.
