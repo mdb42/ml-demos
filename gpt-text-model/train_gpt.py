@@ -28,7 +28,14 @@ torch.manual_seed(42)
 
 datasets = {
     "shakespeare": "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt",
-    "gadsby": "https://www.gutenberg.org/files/47367/47367-0.txt"
+    "gadsby": "https://www.gutenberg.org/files/47367/47367-0.txt",
+    "bible": "https://www.gutenberg.org/cache/epub/10/pg10.txt",
+    "moby_dick": "https://www.gutenberg.org/files/2701/2701-0.txt",
+    "alice": "https://www.gutenberg.org/files/11/11-0.txt",
+    "poe": "https://www.gutenberg.org/files/2147/2147-0.txt",
+    "war_and_peace": "https://www.gutenberg.org/files/2600/2600-0.txt",
+    "iliad": "https://www.gutenberg.org/files/6130/6130-0.txt",
+    "grimm": "https://www.gutenberg.org/files/2591/2591-0.txt"
 }
 
 if len(sys.argv) > 1:
@@ -302,7 +309,7 @@ def load_checkpoint(model, optimizer, checkpoint_path):
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     start_epoch = checkpoint['epoch']
-    print(f"Resuming from epoch {start_epoch}")
+    print(f"Epoch {start_epoch} Loaded")
     return start_epoch
 
 ####################################################################################################
@@ -347,14 +354,78 @@ def train_model(start_step=0):
             # Generate text after saving the checkpoint
             generate_text()
 
-# Attempt to load from a checkpoint
-start_epoch = 0
-checkpoint_path = 'checkpoints/model_epoch_9900.pth'  # Replace with your checkpoint path
-if os.path.exists(checkpoint_path):
-    start_epoch = load_checkpoint(model, optimizer, checkpoint_path)
+    # Save the final model after training
+    save_checkpoint(model, optimizer, num_train_steps)
 
-# Start or resume training
-train_model(start_step=start_epoch)
+def get_path_to_latest_checkpoint():
+    """Return the path to the latest checkpoint file"""
+    checkpoint_dir = 'checkpoints'
+    if not os.path.exists(checkpoint_dir):
+        return None
 
-# Generate text after training
-generate_text()
+    checkpoint_files = os.listdir(checkpoint_dir)
+    if not checkpoint_files:
+        return None
+
+    checkpoint_files.sort(key=lambda x: int(x.split('_')[2].split('.')[0]))
+    latest_checkpoint = checkpoint_files[-1]
+    return os.path.join(checkpoint_dir, latest_checkpoint)
+
+####################################################################################################
+# Interaction Loop
+
+def help():    
+    print("Available commands:")
+    print("- load <epoch>: Load a model checkpoint from a specific epoch")
+    print("- train: Train the model")
+    print("- generate <prompt>: Generate text starting from the prompt")
+    print("- help: Show available commands")
+    print("- exit: Exit the program")
+
+def run():
+    print("Welcome to the GPT Text Model Trainer!")
+    help()
+    while True:
+        command = input("Enter a command: ")
+        if command == "exit":
+            break
+        elif command.startswith("load"):
+            epoch = int(command.split()[1])
+            load(epoch)
+        elif command == "train":
+            train_model()
+        elif command.startswith("generate"):
+            prompt = command.split()[1]
+            generate(prompt)
+        else:
+            print("Invalid command. Please try again.")
+    pass
+
+def load(epoch=0):
+    print(f"Loading model from epoch {epoch}")
+    checkpoint_path = f'checkpoints/model_epoch_{epoch}.pth'
+    if os.path.exists(checkpoint_path):
+        load_checkpoint(model, optimizer, checkpoint_path)
+    else:
+        print(f"Checkpoint not found: {checkpoint_path}")
+    pass
+
+def generate(prompt="The", max_tokens=256):
+    print(f"Generating text from prompt: {prompt}")
+    idx = torch.tensor([encode(prompt)], dtype=torch.long).to(device)
+    generated_sequence = model.generate(idx, max_new_tokens=max_tokens)
+    generated_text = decode(generated_sequence[0].tolist())
+    print(generated_text)
+    pass
+
+def main():
+    # Attempt to load from a checkpoint
+    start_epoch = 0
+    checkpoint_path = get_path_to_latest_checkpoint()
+    if os.path.exists(checkpoint_path):
+        start_epoch = load_checkpoint(model, optimizer, checkpoint_path)
+
+    run()
+
+if __name__ == '__main__':
+    main()

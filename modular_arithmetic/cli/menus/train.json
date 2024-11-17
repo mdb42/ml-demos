@@ -1,0 +1,22 @@
+{
+    "title": "Model Training Configuration",
+    "prompt": "Configure and initiate model training. Choose from available architectures and parameters.",
+    "commands": {
+        "minimal": {
+            "description": "Train minimal architecture (1-2 layers)",
+            "args": "[--homerror]"
+        },
+        "medium": {
+            "description": "Train medium architecture (3-4 layers)",
+            "args": "[--homerror]"
+        },
+        "full": {
+            "description": "Train full architecture (5+ layers)",
+            "args": "[--homerror]"
+        },
+        "back": {
+            "description": "Return to main menu",
+            "next_menu": "main"
+        }
+    }
+}

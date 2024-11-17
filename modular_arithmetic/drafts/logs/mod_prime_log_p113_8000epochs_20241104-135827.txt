@@ -1,0 +1,187 @@
+Prime: 113, Epochs: 8000
+
+Epoch 0/8000, Loss: 0.328443
+Epoch 100/8000, Loss: 0.072275
+Epoch 200/8000, Loss: 0.042574
+Epoch 300/8000, Loss: 0.019375
+Epoch 400/8000, Loss: 0.012251
+Epoch 500/8000, Loss: 0.009126
+Epoch 600/8000, Loss: 0.007351
+Epoch 700/8000, Loss: 0.006249
+Epoch 800/8000, Loss: 0.005415
+Epoch 900/8000, Loss: 0.004827
+Epoch 1000/8000, Loss: 0.004348
+Epoch 1100/8000, Loss: 0.004302
+Epoch 1200/8000, Loss: 0.004256
+Epoch 1300/8000, Loss: 0.004209
+Epoch 1400/8000, Loss: 0.004159
+Epoch 1500/8000, Loss: 0.004108
+Epoch 1600/8000, Loss: 0.004055
+Epoch 1700/8000, Loss: 0.004001
+Epoch 1800/8000, Loss: 0.003945
+Epoch 1900/8000, Loss: 0.003889
+Epoch 2000/8000, Loss: 0.003832
+Epoch 2100/8000, Loss: 0.003826
+Epoch 2200/8000, Loss: 0.003820
+Epoch 2300/8000, Loss: 0.003813
+Epoch 2400/8000, Loss: 0.003807
+Epoch 2500/8000, Loss: 0.003800
+Epoch 2600/8000, Loss: 0.003793
+Epoch 2700/8000, Loss: 0.003785
+Epoch 2800/8000, Loss: 0.003778
+Epoch 2900/8000, Loss: 0.003770
+Epoch 3000/8000, Loss: 0.003761
+Epoch 3100/8000, Loss: 0.003761
+Epoch 3200/8000, Loss: 0.003760
+Epoch 3300/8000, Loss: 0.003759
+Epoch 3400/8000, Loss: 0.003758
+Epoch 3500/8000, Loss: 0.003757
+Epoch 3600/8000, Loss: 0.003756
+Epoch 3700/8000, Loss: 0.003755
+Epoch 3800/8000, Loss: 0.003754
+Epoch 3900/8000, Loss: 0.003752
+Epoch 4000/8000, Loss: 0.003751
+Epoch 4100/8000, Loss: 0.003751
+Epoch 4200/8000, Loss: 0.003751
+Epoch 4300/8000, Loss: 0.003751
+Epoch 4400/8000, Loss: 0.003751
+Epoch 4500/8000, Loss: 0.003751
+Epoch 4600/8000, Loss: 0.003751
+Epoch 4700/8000, Loss: 0.003750
+Epoch 4800/8000, Loss: 0.003750
+Epoch 4900/8000, Loss: 0.003750
+Epoch 5000/8000, Loss: 0.003750
+Epoch 5100/8000, Loss: 0.003750
+Epoch 5200/8000, Loss: 0.003750
+Epoch 5300/8000, Loss: 0.003750
+Epoch 5400/8000, Loss: 0.003750
+Epoch 5500/8000, Loss: 0.003750
+Epoch 5600/8000, Loss: 0.003750
+Epoch 5700/8000, Loss: 0.003750
+Epoch 5800/8000, Loss: 0.003750
+Epoch 5900/8000, Loss: 0.003750
+Epoch 6000/8000, Loss: 0.003750
+Epoch 6100/8000, Loss: 0.003750
+Epoch 6200/8000, Loss: 0.003750
+Epoch 6300/8000, Loss: 0.003750
+Epoch 6400/8000, Loss: 0.003750
+Epoch 6500/8000, Loss: 0.003750
+Epoch 6600/8000, Loss: 0.003750
+Epoch 6700/8000, Loss: 0.003750
+Epoch 6800/8000, Loss: 0.003750
+Epoch 6900/8000, Loss: 0.003750
+Epoch 7000/8000, Loss: 0.003750
+Epoch 7100/8000, Loss: 0.003750
+Epoch 7200/8000, Loss: 0.003750
+Epoch 7300/8000, Loss: 0.003750
+Epoch 7400/8000, Loss: 0.003750
+Epoch 7500/8000, Loss: 0.003750
+Epoch 7600/8000, Loss: 0.003750
+Epoch 7700/8000, Loss: 0.003750
+Epoch 7800/8000, Loss: 0.003750
+Epoch 7900/8000, Loss: 0.003750
+Epoch 7999/8000, Loss: 0.003750
+
+Accuracy: 53.00% (53/100)
+
+Test Results:
+Input: (84, 15) | Target: 99 | Predicted: 99
+Input: (37, 44) | Target: 81 | Predicted: 80
+Input: (55, 94) | Target: 36 | Predicted: 35
+Input: (70, 30) | Target: 100 | Predicted: 100
+Input: (83, 84) | Target: 54 | Predicted: 54
+Input: (57, 97) | Target: 41 | Predicted: 40
+Input: (38, 76) | Target: 1 | Predicted: 26
+Input: (28, 43) | Target: 71 | Predicted: 71
+Input: (87, 47) | Target: 21 | Predicted: 21
+Input: (2, 101) | Target: 103 | Predicted: 102
+Input: (5, 28) | Target: 33 | Predicted: 32
+Input: (109, 96) | Target: 92 | Predicted: 92
+Input: (0, 68) | Target: 68 | Predicted: 68
+Input: (54, 50) | Target: 104 | Predicted: 104
+Input: (97, 0) | Target: 97 | Predicted: 99
+Input: (54, 32) | Target: 86 | Predicted: 86
+Input: (107, 84) | Target: 78 | Predicted: 78
+Input: (77, 10) | Target: 87 | Predicted: 87
+Input: (58, 52) | Target: 110 | Predicted: 106
+Input: (69, 107) | Target: 63 | Predicted: 63
+Input: (93, 90) | Target: 70 | Predicted: 71
+Input: (55, 26) | Target: 81 | Predicted: 82
+Input: (1, 107) | Target: 108 | Predicted: 105
+Input: (72, 83) | Target: 42 | Predicted: 42
+Input: (53, 58) | Target: 111 | Predicted: 85
+Input: (35, 27) | Target: 62 | Predicted: 62
+Input: (4, 10) | Target: 14 | Predicted: 14
+Input: (47, 95) | Target: 29 | Predicted: 28
+Input: (72, 79) | Target: 38 | Predicted: 38
+Input: (98, 23) | Target: 8 | Predicted: 10
+Input: (53, 92) | Target: 32 | Predicted: 31
+Input: (73, 58) | Target: 18 | Predicted: 18
+Input: (43, 6) | Target: 49 | Predicted: 49
+Input: (40, 47) | Target: 87 | Predicted: 86
+Input: (19, 40) | Target: 59 | Predicted: 60
+Input: (15, 104) | Target: 6 | Predicted: 7
+Input: (8, 51) | Target: 59 | Predicted: 59
+Input: (34, 33) | Target: 67 | Predicted: 66
+Input: (76, 13) | Target: 89 | Predicted: 89
+Input: (5, 98) | Target: 103 | Predicted: 103
+Input: (106, 73) | Target: 66 | Predicted: 66
+Input: (35, 59) | Target: 94 | Predicted: 95
+Input: (32, 54) | Target: 86 | Predicted: 86
+Input: (74, 104) | Target: 65 | Predicted: 65
+Input: (30, 108) | Target: 25 | Predicted: 25
+Input: (109, 59) | Target: 55 | Predicted: 54
+Input: (80, 104) | Target: 71 | Predicted: 71
+Input: (70, 27) | Target: 97 | Predicted: 97
+Input: (68, 84) | Target: 39 | Predicted: 39
+Input: (80, 76) | Target: 43 | Predicted: 43
+Input: (43, 79) | Target: 9 | Predicted: 9
+Input: (63, 2) | Target: 65 | Predicted: 64
+Input: (110, 86) | Target: 83 | Predicted: 83
+Input: (95, 7) | Target: 102 | Predicted: 101
+Input: (36, 79) | Target: 2 | Predicted: 7
+Input: (31, 7) | Target: 38 | Predicted: 39
+Input: (31, 91) | Target: 9 | Predicted: 10
+Input: (109, 32) | Target: 28 | Predicted: 26
+Input: (109, 51) | Target: 47 | Predicted: 46
+Input: (23, 70) | Target: 93 | Predicted: 93
+Input: (30, 86) | Target: 3 | Predicted: 4
+Input: (9, 1) | Target: 10 | Predicted: 9
+Input: (97, 67) | Target: 51 | Predicted: 51
+Input: (112, 80) | Target: 79 | Predicted: 78
+Input: (26, 23) | Target: 49 | Predicted: 48
+Input: (83, 93) | Target: 63 | Predicted: 63
+Input: (38, 37) | Target: 75 | Predicted: 75
+Input: (79, 51) | Target: 17 | Predicted: 17
+Input: (1, 104) | Target: 105 | Predicted: 103
+Input: (71, 36) | Target: 107 | Predicted: 105
+Input: (22, 36) | Target: 58 | Predicted: 58
+Input: (31, 111) | Target: 29 | Predicted: 28
+Input: (21, 6) | Target: 27 | Predicted: 28
+Input: (81, 20) | Target: 101 | Predicted: 101
+Input: (29, 53) | Target: 82 | Predicted: 82
+Input: (62, 12) | Target: 74 | Predicted: 73
+Input: (44, 37) | Target: 81 | Predicted: 81
+Input: (34, 67) | Target: 101 | Predicted: 102
+Input: (107, 55) | Target: 49 | Predicted: 48
+Input: (98, 48) | Target: 33 | Predicted: 33
+Input: (50, 56) | Target: 106 | Predicted: 104
+Input: (79, 85) | Target: 51 | Predicted: 51
+Input: (53, 1) | Target: 54 | Predicted: 53
+Input: (53, 5) | Target: 58 | Predicted: 57
+Input: (39, 94) | Target: 20 | Predicted: 20
+Input: (88, 98) | Target: 73 | Predicted: 74
+Input: (29, 41) | Target: 70 | Predicted: 70
+Input: (103, 74) | Target: 64 | Predicted: 64
+Input: (10, 93) | Target: 103 | Predicted: 103
+Input: (76, 79) | Target: 42 | Predicted: 42
+Input: (94, 9) | Target: 103 | Predicted: 101
+Input: (97, 55) | Target: 39 | Predicted: 38
+Input: (56, 31) | Target: 87 | Predicted: 88
+Input: (7, 22) | Target: 29 | Predicted: 29
+Input: (103, 82) | Target: 72 | Predicted: 72
+Input: (46, 10) | Target: 56 | Predicted: 56
+Input: (79, 82) | Target: 48 | Predicted: 48
+Input: (109, 58) | Target: 54 | Predicted: 53
+Input: (14, 91) | Target: 105 | Predicted: 105
+Input: (5, 58) | Target: 63 | Predicted: 63

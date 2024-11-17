@@ -1,0 +1,55 @@
+{
+    "title": "Neural Network Laboratory - Modular Arithmetic Study",
+    "prompt": "Welcome to the laboratory. Here we explore how neural networks learn and preserve algebraic structures in modular arithmetic, with a focus on homomorphic property preservation in neural network training.",
+    "commands": {
+        "create": {
+            "description": "Define a new model architecture",
+            "args": "[name] [--prime P] [--layers N] [--homerror]",
+            "next_menu": "create",
+            "help": "Creates new model configuration. Without args, enters interactive mode."
+        },
+        "train": {
+            "description": "Train a model from scratch",
+            "args": "[model_name] [--epochs N] [--batch B]",
+            "next_menu": "train",
+            "help": "Trains specified model or lists available models for training."
+        },
+        "analyze": {
+            "description": "Analyze model properties and performance",
+            "args": "[model_name] [--plots] [--metrics] [--save-to DIR]",
+            "next_menu": "analyze",
+            "help": "Performs comprehensive analysis. Generates visualizations and metrics."
+        },
+        "test": {
+            "description": "Interactive testing of trained model",
+            "args": "[model_name] [a b]",
+            "next_menu": "test",
+            "help": "Test modular addition. Direct input or interactive mode."
+        },
+        "list": {
+            "description": "List all models and their status",
+            "args": "[--status] [--details]",
+            "help": "Shows available models, training status, and configuration."
+        },
+        "compare": {
+            "description": "Compare multiple models",
+            "args": "model1 model2 [model3...]",
+            "next_menu": "compare",
+            "help": "Generates comparative analysis between models."
+        },
+        "export": {
+            "description": "Export model results and analysis",
+            "args": "[model_name] [--format fmt] [--path dir]",
+            "help": "Exports model, results, and visualizations to specified format."
+        },
+        "help": {
+            "description": "Show detailed help for commands",
+            "args": "[command]",
+            "help": "Displays detailed usage information for specified command."
+        },
+        "exit": {
+            "description": "Exit the laboratory",
+            "help": "Saves any pending changes and exits."
+        }
+    }
+}
