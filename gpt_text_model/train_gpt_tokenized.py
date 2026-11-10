@@ -377,6 +377,9 @@ def train_model(start_step=0):
             print("\n[+] Generating sample text...")
             generate_text()
 
+    # Save the final model after training
+    save_checkpoint(model, optimizer, num_train_steps)
+
 def get_path_to_latest_checkpoint():
     checkpoint_dir = 'checkpoints_bpe'
     if not os.path.exists(checkpoint_dir):
