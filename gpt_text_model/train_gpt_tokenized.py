@@ -12,6 +12,10 @@ try:
 except ImportError:
     raise ImportError("Please install the tokenizers library with: pip install tokenizers")
 
+# A sampled sequence of byte-level tokens need not be valid UTF-8, and decodes to text containing U+FFFD.
+# Print such characters as "?" rather than crash when output goes to a file or pipe in a narrower encoding.
+sys.stdout.reconfigure(errors='replace')
+
 # Updated Hyperparameters
 batch_size = 64          # Increased batch size
 block_size = 256         # Increased block size for more context (block_size now counts tokens)
