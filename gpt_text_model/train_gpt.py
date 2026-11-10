@@ -6,6 +6,11 @@ import random
 import torch.nn as nn
 import torch.nn.functional as F
 
+# The Gutenberg datasets contain characters (Greek, Hebrew, ...) that a narrower output encoding cannot show.
+# Print them as "?" rather than crash when output goes to a file or pipe.
+if hasattr(sys.stdout, 'reconfigure'):  # Not every stdout has it (IDLE, Jupyter)
+    sys.stdout.reconfigure(errors='replace')
+
 # Updated Hyperparameters
 batch_size = 64  # Increased batch size
 block_size = 256  # Increased block size for more context

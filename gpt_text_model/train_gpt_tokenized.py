@@ -14,7 +14,8 @@ except ImportError:
 
 # A sampled sequence of byte-level tokens need not be valid UTF-8, and decodes to text containing U+FFFD.
 # Print such characters as "?" rather than crash when output goes to a file or pipe in a narrower encoding.
-sys.stdout.reconfigure(errors='replace')
+if hasattr(sys.stdout, 'reconfigure'):  # Not every stdout has it (IDLE, Jupyter)
+    sys.stdout.reconfigure(errors='replace')
 
 # Updated Hyperparameters
 batch_size = 64          # Increased batch size
