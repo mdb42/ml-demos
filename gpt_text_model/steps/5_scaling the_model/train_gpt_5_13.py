@@ -327,7 +327,7 @@ def train_model(start_step=0):
 
 # Attempt to load from a checkpoint
 start_epoch = 0
-checkpoint_path = 'checkpoints/model_epoch_9999.pth'  # Replace with your checkpoint path
+checkpoint_path = 'checkpoints/model_epoch_9900.pth'  # Replace with your checkpoint path
 if os.path.exists(checkpoint_path):
     start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
 
