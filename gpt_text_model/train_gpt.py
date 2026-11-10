@@ -365,7 +365,8 @@ def get_path_to_latest_checkpoint():
     if not os.path.exists(checkpoint_dir):
         return None
 
-    checkpoint_files = os.listdir(checkpoint_dir)
+    # Only files named like model_epoch_<step>.pth, so other files in the folder are ignored
+    checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_epoch_') and f.endswith('.pth')]
     if not checkpoint_files:
         return None
 
@@ -426,7 +427,7 @@ def main():
     # Attempt to load from a checkpoint
     start_epoch = 0
     checkpoint_path = get_path_to_latest_checkpoint()
-    if os.path.exists(checkpoint_path):
+    if checkpoint_path and os.path.exists(checkpoint_path):
         start_epoch = load_checkpoint(model, optimizer, checkpoint_path)
 
     run()

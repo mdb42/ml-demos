@@ -381,7 +381,8 @@ def get_path_to_latest_checkpoint():
     checkpoint_dir = 'checkpoints'
     if not os.path.exists(checkpoint_dir):
         return None
-    checkpoint_files = os.listdir(checkpoint_dir)
+    # Only files named like model_epoch_<step>.pth, so other files in the folder are ignored
+    checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_epoch_') and f.endswith('.pth')]
     if not checkpoint_files:
         return None
     checkpoint_files.sort(key=lambda x: int(x.split('_')[2].split('.')[0]))
