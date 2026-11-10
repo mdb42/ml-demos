@@ -410,16 +410,21 @@ def run():
         command = input("Enter a command: ")
         if command == "exit":
             break
+        elif command == "help":
+            help()
         elif command.startswith("load"):
-            epoch = int(command.split()[1])
-            load(epoch)
+            parts = command.split()
+            if len(parts) == 2 and parts[1].isdigit():
+                load(int(parts[1]))
+            else:
+                print("Usage: load <epoch>")
         elif command == "train":
             train_model(start_step=start_epoch)
             start_epoch = num_train_steps  # Training is complete
         elif command.startswith("generate"):
             # Everything after the command is taken as the prompt.
             prompt = command[len("generate "):]
-            generate(prompt)
+            generate(prompt or "The")
         else:
             print("Invalid command. Please try again.")
 
