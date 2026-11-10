@@ -310,6 +310,7 @@ def load_checkpoint(model, optimizer, checkpoint_path):
 
 def generate_text():
     """Generates text starting from predefined prompts."""
+    model.eval()  # Switch dropout off for generation
     scenarios = {
         "Start with 'A'": "A",
         "Start with 'The'": "The",
@@ -322,6 +323,7 @@ def generate_text():
         generated_sequence = model.generate(idx, max_new_tokens=256)
         generated_text = decode(generated_sequence[0].tolist())
         print(generated_text)
+    model.train()  # Back to training mode, since training calls this function
 
 
 ####################################################################################################

@@ -298,6 +298,7 @@ train_model()
 ####################################################################################################
 # Generating Text
 
+model.eval()  # Switch dropout off for generation
 idx = torch.zeros((1, 1), dtype=torch.long, device=device)
 generated_sequence = model.generate(idx, max_new_tokens=100)
 generated_text = decode(generated_sequence[0].tolist())

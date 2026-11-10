@@ -328,6 +328,7 @@ def load_checkpoint(model, optimizer, checkpoint_path):
 
 def generate_text():
     """Generates text starting from predefined prompts."""
+    model.eval()  # Switch dropout off for generation
     scenarios = {
         "Start with '<|bos|>'": "<|bos|> ",
         "Start with 'The'": "The ",
@@ -339,6 +340,7 @@ def generate_text():
         generated_sequence = model.generate(idx, max_new_tokens=256)
         generated_text = decode(generated_sequence[0].tolist())
         print(generated_text)
+    model.train()  # Back to training mode, since training calls this function
 
 ####################################################################################################
 # Training Loop
@@ -426,10 +428,12 @@ def load(epoch=0):
 
 def generate(prompt="The", max_tokens=256):
     print(f"Generating text from prompt: {prompt}")
+    model.eval()  # Switch dropout off for generation
     idx = torch.tensor([encode(prompt)], dtype=torch.long).to(device)
     generated_sequence = model.generate(idx, max_new_tokens=max_tokens)
     generated_text = decode(generated_sequence[0].tolist())
     print(generated_text)
+    model.train()  # Back to training mode
 
 def main():
     # Attempt to load from the latest checkpoint if one exists
