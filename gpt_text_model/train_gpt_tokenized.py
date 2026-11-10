@@ -302,7 +302,7 @@ def estimate_loss():
 ####################################################################################################
 # Save the Model
 
-def save_checkpoint(model, optimizer, epoch, checkpoint_dir='checkpoints'):
+def save_checkpoint(model, optimizer, epoch, checkpoint_dir='checkpoints_bpe'):  # Kept apart from the character model's checkpoints
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_path = os.path.join(checkpoint_dir, f'model_epoch_{epoch}.pth')
     torch.save({
@@ -378,7 +378,7 @@ def train_model(start_step=0):
             generate_text()
 
 def get_path_to_latest_checkpoint():
-    checkpoint_dir = 'checkpoints'
+    checkpoint_dir = 'checkpoints_bpe'
     if not os.path.exists(checkpoint_dir):
         return None
     # Only files named like model_epoch_<step>.pth, so other files in the folder are ignored
@@ -431,7 +431,7 @@ def run():
 def load(epoch=0):
     global start_epoch
     print(f"Loading model from epoch {epoch}")
-    checkpoint_path = f'checkpoints/model_epoch_{epoch}.pth'
+    checkpoint_path = f'checkpoints_bpe/model_epoch_{epoch}.pth'
     if os.path.exists(checkpoint_path):
         start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
     else:
