@@ -304,7 +304,7 @@ train_model()
 ####################################################################################################
 # Generating Text
 
-idx = torch.zeros((1, 1), dtype=torch.long)
+idx = torch.zeros((1, 1), dtype=torch.long, device=device)
 generated_sequence = model.generate(idx, max_new_tokens=100)
 generated_text = decode(generated_sequence[0].tolist())
 print(generated_text)
