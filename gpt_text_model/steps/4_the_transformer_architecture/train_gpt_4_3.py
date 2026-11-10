@@ -47,7 +47,7 @@ if not os.path.isfile(data_file):
     try:
         response = requests.get(url)
         response.raise_for_status()  
-        with open(data_file, 'w') as f:
+        with open(data_file, 'w', encoding='utf-8', newline='') as f:  # UTF-8 on every platform, line endings kept as downloaded
             f.write(response.text)
         print(f"Dataset saved to {data_file}.")
     except requests.exceptions.RequestException as e:
@@ -58,7 +58,7 @@ else:
 ####################################################################################################
 # Load the Dataset and Create Vocabulary
 
-with open(data_file, 'r') as f:
+with open(data_file, 'r', encoding='utf-8') as f:
     text = f.read()
 
 chars = sorted(list(set(text)))
@@ -264,7 +264,7 @@ train_model()
 ####################################################################################################
 # Generating Text
 
-idx = torch.zeros((1, 1), dtype=torch.long)
+idx = torch.zeros((1, 1), dtype=torch.long, device=device)
 generated_sequence = model.generate(idx, max_new_tokens=100)
 generated_text = decode(generated_sequence[0].tolist())
 print(generated_text)

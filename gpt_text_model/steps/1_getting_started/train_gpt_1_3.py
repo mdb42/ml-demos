@@ -43,7 +43,7 @@ if not os.path.isfile(data_file):
     try:
         response = requests.get(url)
         response.raise_for_status()  # Check for successful request
-        with open(data_file, 'w') as f:
+        with open(data_file, 'w', encoding='utf-8', newline='') as f:  # UTF-8 on every platform, line endings kept as downloaded
             f.write(response.text)
         print(f"Dataset saved to {data_file}.")
     except requests.exceptions.RequestException as e:

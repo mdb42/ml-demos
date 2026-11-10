@@ -6,6 +6,11 @@ import random
 import torch.nn as nn
 import torch.nn.functional as F
 
+# The Gutenberg datasets contain characters (Greek, Hebrew, ...) that a narrower output encoding cannot show.
+# Print them as "?" rather than crash when output goes to a file or pipe.
+if hasattr(sys.stdout, 'reconfigure'):  # Not every stdout has it (IDLE, Jupyter)
+    sys.stdout.reconfigure(errors='replace')
+
 # Updated Hyperparameters
 batch_size = 64  # Increased batch size
 block_size = 256  # Increased block size for more context
@@ -58,7 +63,7 @@ if not os.path.isfile(data_file):
     try:
         response = requests.get(url)
         response.raise_for_status()  
-        with open(data_file, 'w') as f:
+        with open(data_file, 'w', encoding='utf-8', newline='') as f:  # UTF-8 on every platform, line endings kept as downloaded
             f.write(response.text)
         print(f"Dataset saved to {data_file}.")
     except requests.exceptions.RequestException as e:
@@ -69,7 +74,7 @@ else:
 ####################################################################################################
 # Load the Dataset and Create Vocabulary
 
-with open(data_file, 'r') as f:
+with open(data_file, 'r', encoding='utf-8') as f:
     text = f.read()
 
 chars = sorted(list(set(text)))
@@ -305,7 +310,7 @@ def save_checkpoint(model, optimizer, epoch, checkpoint_dir='checkpoints'):
 ####################################################################################################
 # Load the Model
 def load_checkpoint(model, optimizer, checkpoint_path):
-    checkpoint = torch.load(checkpoint_path)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     start_epoch = checkpoint['epoch']
@@ -317,6 +322,7 @@ def load_checkpoint(model, optimizer, checkpoint_path):
 
 def generate_text():
     """Generates text starting from predefined prompts."""
+    model.eval()  # Switch dropout off for generation
     scenarios = {
         "Start with 'A'": "A",
         "Start with 'The'": "The",
@@ -329,6 +335,7 @@ def generate_text():
         generated_sequence = model.generate(idx, max_new_tokens=256)
         generated_text = decode(generated_sequence[0].tolist())
         print(generated_text)
+    model.train()  # Back to training mode, since training calls this function
 
 
 ####################################################################################################
@@ -363,7 +370,8 @@ def get_path_to_latest_checkpoint():
     if not os.path.exists(checkpoint_dir):
         return None
 
-    checkpoint_files = os.listdir(checkpoint_dir)
+    # Only files named like model_epoch_<step>.pth, so other files in the folder are ignored
+    checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_epoch_') and f.endswith('.pth')]
     if not checkpoint_files:
         return None
 
@@ -374,6 +382,8 @@ def get_path_to_latest_checkpoint():
 ####################################################################################################
 # Interaction Loop
 
+start_epoch = 0  # Step to resume training from; set whenever a checkpoint is loaded
+
 def help():    
     print("Available commands:")
     print("- load <epoch>: Load a model checkpoint from a specific epoch")
@@ -383,47 +393,62 @@ def help():
     print("- exit: Exit the program")
 
 def run():
+    global start_epoch
     print("Welcome to the GPT Text Model Trainer!")
     help()
     while True:
         command = input("Enter a command: ")
         if command == "exit":
             break
+        elif command == "help":
+            help()
         elif command.startswith("load"):
-            epoch = int(command.split()[1])
-            load(epoch)
+            parts = command.split()
+            if len(parts) == 2 and parts[1].isdigit():
+                load(int(parts[1]))
+            else:
+                print("Usage: load <epoch>")
         elif command == "train":
-            train_model()
+            train_model(start_step=start_epoch)
+            start_epoch = num_train_steps  # Training is complete
         elif command.startswith("generate"):
-            prompt = command.split()[1]
-            generate(prompt)
+            # Everything after the command is taken as the prompt.
+            prompt = command[len("generate "):]
+            generate(prompt or "The")
         else:
             print("Invalid command. Please try again.")
     pass
 
 def load(epoch=0):
+    global start_epoch
     print(f"Loading model from epoch {epoch}")
     checkpoint_path = f'checkpoints/model_epoch_{epoch}.pth'
     if os.path.exists(checkpoint_path):
-        load_checkpoint(model, optimizer, checkpoint_path)
+        start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
     else:
         print(f"Checkpoint not found: {checkpoint_path}")
     pass
 
 def generate(prompt="The", max_tokens=256):
+    unknown = sorted(set(prompt) - set(stoi))
+    if unknown:
+        print(f"Not in the vocabulary, cannot encode: {unknown}")
+        return
     print(f"Generating text from prompt: {prompt}")
+    model.eval()  # Switch dropout off for generation
     idx = torch.tensor([encode(prompt)], dtype=torch.long).to(device)
     generated_sequence = model.generate(idx, max_new_tokens=max_tokens)
     generated_text = decode(generated_sequence[0].tolist())
     print(generated_text)
+    model.train()  # Back to training mode
     pass
 
 def main():
+    global start_epoch
     # Attempt to load from a checkpoint
-    start_epoch = 0
     checkpoint_path = get_path_to_latest_checkpoint()
-    if os.path.exists(checkpoint_path):
-        start_epoch = load_checkpoint(model, optimizer, checkpoint_path)
+    if checkpoint_path and os.path.exists(checkpoint_path):
+        start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
 
     run()
 

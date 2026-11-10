@@ -51,7 +51,7 @@ if not os.path.isfile(data_file):
     try:
         response = requests.get(url)
         response.raise_for_status()  
-        with open(data_file, 'w') as f:
+        with open(data_file, 'w', encoding='utf-8', newline='') as f:  # UTF-8 on every platform, line endings kept as downloaded
             f.write(response.text)
         print(f"Dataset saved to {data_file}.")
     except requests.exceptions.RequestException as e:
@@ -62,7 +62,7 @@ else:
 ####################################################################################################
 # Load the Dataset and Create Vocabulary
 
-with open(data_file, 'r') as f:
+with open(data_file, 'r', encoding='utf-8') as f:
     text = f.read()
 
 chars = sorted(list(set(text)))
@@ -298,7 +298,7 @@ def save_checkpoint(model, optimizer, epoch, checkpoint_dir='checkpoints'):
 ####################################################################################################
 # Load the Model
 def load_checkpoint(model, optimizer, checkpoint_path):
-    checkpoint = torch.load(checkpoint_path)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     start_epoch = checkpoint['epoch']
@@ -310,6 +310,7 @@ def load_checkpoint(model, optimizer, checkpoint_path):
 
 def generate_text():
     """Generates text starting from predefined prompts."""
+    model.eval()  # Switch dropout off for generation
     scenarios = {
         "Start with 'A'": "A",
         "Start with 'The'": "The",
@@ -322,6 +323,7 @@ def generate_text():
         generated_sequence = model.generate(idx, max_new_tokens=256)
         generated_text = decode(generated_sequence[0].tolist())
         print(generated_text)
+    model.train()  # Back to training mode, since training calls this function
 
 
 ####################################################################################################
@@ -351,7 +353,7 @@ def train_model(start_step=0):
 start_epoch = 0
 checkpoint_path = 'checkpoints/model_epoch_4100.pth'  # Replace with your checkpoint path
 if os.path.exists(checkpoint_path):
-    start_epoch = load_checkpoint(model, optimizer, checkpoint_path)
+    start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
 
 # Start or resume training
 train_model(start_step=start_epoch)

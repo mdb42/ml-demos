@@ -12,6 +12,11 @@ try:
 except ImportError:
     raise ImportError("Please install the tokenizers library with: pip install tokenizers")
 
+# A sampled sequence of byte-level tokens need not be valid UTF-8, and decodes to text containing U+FFFD.
+# Print such characters as "?" rather than crash when output goes to a file or pipe in a narrower encoding.
+if hasattr(sys.stdout, 'reconfigure'):  # Not every stdout has it (IDLE, Jupyter)
+    sys.stdout.reconfigure(errors='replace')
+
 # Updated Hyperparameters
 batch_size = 64          # Increased batch size
 block_size = 256         # Increased block size for more context (block_size now counts tokens)
@@ -56,7 +61,7 @@ if not os.path.isfile(data_file):
     try:
         response = requests.get(url)
         response.raise_for_status()  
-        with open(data_file, 'w', encoding='utf-8') as f:
+        with open(data_file, 'w', encoding='utf-8', newline='') as f:  # UTF-8 on every platform, line endings kept as downloaded
             f.write(response.text)
         print(f"Dataset saved to {data_file}.")
     except requests.exceptions.RequestException as e:
@@ -71,6 +76,7 @@ else:
 bpe_dir = os.path.join(data_dir, "bpe")
 vocab_file = os.path.join(bpe_dir, "vocab.json")
 merges_file = os.path.join(bpe_dir, "merges.txt")
+special_tokens = ["<|pad|>", "<|unk|>", "<|bos|>", "<|eos|>"]
 
 # If the BPE model files do not exist, train a new tokenizer on the dataset.
 if not os.path.exists(vocab_file) or not os.path.exists(merges_file):
@@ -78,12 +84,14 @@ if not os.path.exists(vocab_file) or not os.path.exists(merges_file):
     print("Training new BPE tokenizer...")
     tokenizer = ByteLevelBPETokenizer()
     # You can adjust vocab_size as needed; GPT-2 used 50,257 tokens by default.
-    tokenizer.train(files=[data_file], vocab_size=50257, min_frequency=2, special_tokens=["<|pad|>", "<|unk|>", "<|bos|>", "<|eos|>"])
+    tokenizer.train(files=[data_file], vocab_size=50257, min_frequency=2, special_tokens=special_tokens)
     tokenizer.save_model(bpe_dir)
     print(f"Tokenizer saved to {bpe_dir}.")
 else:
     print("Loading existing BPE tokenizer...")
     tokenizer = ByteLevelBPETokenizer(vocab_file, merges_file)
+    # The saved files do not mark the special tokens as special, so register them again
+    tokenizer.add_special_tokens(special_tokens)
 
 # Get the vocabulary size from the tokenizer
 vocab_size = tokenizer.get_vocab_size()
@@ -302,7 +310,7 @@ def estimate_loss():
 ####################################################################################################
 # Save the Model
 
-def save_checkpoint(model, optimizer, epoch, checkpoint_dir='checkpoints'):
+def save_checkpoint(model, optimizer, epoch, checkpoint_dir='checkpoints_bpe'):  # Kept apart from the character model's checkpoints
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_path = os.path.join(checkpoint_dir, f'model_epoch_{epoch}.pth')
     torch.save({
@@ -328,6 +336,7 @@ def load_checkpoint(model, optimizer, checkpoint_path):
 
 def generate_text():
     """Generates text starting from predefined prompts."""
+    model.eval()  # Switch dropout off for generation
     scenarios = {
         "Start with '<|bos|>'": "<|bos|> ",
         "Start with 'The'": "The ",
@@ -339,6 +348,7 @@ def generate_text():
         generated_sequence = model.generate(idx, max_new_tokens=256)
         generated_text = decode(generated_sequence[0].tolist())
         print(generated_text)
+    model.train()  # Back to training mode, since training calls this function
 
 ####################################################################################################
 # Training Loop
@@ -375,11 +385,15 @@ def train_model(start_step=0):
             print("\n[+] Generating sample text...")
             generate_text()
 
+    # Save the final model after training
+    save_checkpoint(model, optimizer, num_train_steps)
+
 def get_path_to_latest_checkpoint():
-    checkpoint_dir = 'checkpoints'
+    checkpoint_dir = 'checkpoints_bpe'
     if not os.path.exists(checkpoint_dir):
         return None
-    checkpoint_files = os.listdir(checkpoint_dir)
+    # Only files named like model_epoch_<step>.pth, so other files in the folder are ignored
+    checkpoint_files = [f for f in os.listdir(checkpoint_dir) if f.startswith('model_epoch_') and f.endswith('.pth')]
     if not checkpoint_files:
         return None
     checkpoint_files.sort(key=lambda x: int(x.split('_')[2].split('.')[0]))
@@ -388,6 +402,8 @@ def get_path_to_latest_checkpoint():
 
 ####################################################################################################
 # Interaction Loop
+
+start_epoch = 0  # Step to resume training from; set whenever a checkpoint is loaded
 
 def help():
     print("Available commands:")
@@ -398,45 +414,55 @@ def help():
     print("- exit: Exit the program")
 
 def run():
+    global start_epoch
     print("Welcome to the GPT Text Model Trainer!")
     help()
     while True:
         command = input("Enter a command: ")
         if command == "exit":
             break
+        elif command == "help":
+            help()
         elif command.startswith("load"):
-            epoch = int(command.split()[1])
-            load(epoch)
+            parts = command.split()
+            if len(parts) == 2 and parts[1].isdigit():
+                load(int(parts[1]))
+            else:
+                print("Usage: load <epoch>")
         elif command == "train":
-            train_model()
+            train_model(start_step=start_epoch)
+            start_epoch = num_train_steps  # Training is complete
         elif command.startswith("generate"):
             # Everything after the command is taken as the prompt.
             prompt = command[len("generate "):]
-            generate(prompt)
+            generate(prompt or "The")
         else:
             print("Invalid command. Please try again.")
 
 def load(epoch=0):
+    global start_epoch
     print(f"Loading model from epoch {epoch}")
-    checkpoint_path = f'checkpoints/model_epoch_{epoch}.pth'
+    checkpoint_path = f'checkpoints_bpe/model_epoch_{epoch}.pth'
     if os.path.exists(checkpoint_path):
-        load_checkpoint(model, optimizer, checkpoint_path)
+        start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
     else:
         print(f"Checkpoint not found: {checkpoint_path}")
 
 def generate(prompt="The", max_tokens=256):
     print(f"Generating text from prompt: {prompt}")
+    model.eval()  # Switch dropout off for generation
     idx = torch.tensor([encode(prompt)], dtype=torch.long).to(device)
     generated_sequence = model.generate(idx, max_new_tokens=max_tokens)
     generated_text = decode(generated_sequence[0].tolist())
     print(generated_text)
+    model.train()  # Back to training mode
 
 def main():
+    global start_epoch
     # Attempt to load from the latest checkpoint if one exists
-    start_epoch = 0
     checkpoint_path = get_path_to_latest_checkpoint()
     if checkpoint_path and os.path.exists(checkpoint_path):
-        start_epoch = load_checkpoint(model, optimizer, checkpoint_path)
+        start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
     run()
 
 if __name__ == '__main__':
