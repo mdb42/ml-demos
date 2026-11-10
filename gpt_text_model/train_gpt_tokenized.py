@@ -392,6 +392,8 @@ def get_path_to_latest_checkpoint():
 ####################################################################################################
 # Interaction Loop
 
+start_epoch = 0  # Step to resume training from; set whenever a checkpoint is loaded
+
 def help():
     print("Available commands:")
     print("- load <epoch>: Load a model checkpoint from a specific epoch")
@@ -401,6 +403,7 @@ def help():
     print("- exit: Exit the program")
 
 def run():
+    global start_epoch
     print("Welcome to the GPT Text Model Trainer!")
     help()
     while True:
@@ -411,7 +414,8 @@ def run():
             epoch = int(command.split()[1])
             load(epoch)
         elif command == "train":
-            train_model()
+            train_model(start_step=start_epoch)
+            start_epoch = num_train_steps  # Training is complete
         elif command.startswith("generate"):
             # Everything after the command is taken as the prompt.
             prompt = command[len("generate "):]
@@ -420,10 +424,11 @@ def run():
             print("Invalid command. Please try again.")
 
 def load(epoch=0):
+    global start_epoch
     print(f"Loading model from epoch {epoch}")
     checkpoint_path = f'checkpoints/model_epoch_{epoch}.pth'
     if os.path.exists(checkpoint_path):
-        load_checkpoint(model, optimizer, checkpoint_path)
+        start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
     else:
         print(f"Checkpoint not found: {checkpoint_path}")
 
@@ -437,11 +442,11 @@ def generate(prompt="The", max_tokens=256):
     model.train()  # Back to training mode
 
 def main():
+    global start_epoch
     # Attempt to load from the latest checkpoint if one exists
-    start_epoch = 0
     checkpoint_path = get_path_to_latest_checkpoint()
     if checkpoint_path and os.path.exists(checkpoint_path):
-        start_epoch = load_checkpoint(model, optimizer, checkpoint_path)
+        start_epoch = load_checkpoint(model, optimizer, checkpoint_path) + 1  # The saved step is done; resume after it
     run()
 
 if __name__ == '__main__':
