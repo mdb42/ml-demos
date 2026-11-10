@@ -71,6 +71,7 @@ else:
 bpe_dir = os.path.join(data_dir, "bpe")
 vocab_file = os.path.join(bpe_dir, "vocab.json")
 merges_file = os.path.join(bpe_dir, "merges.txt")
+special_tokens = ["<|pad|>", "<|unk|>", "<|bos|>", "<|eos|>"]
 
 # If the BPE model files do not exist, train a new tokenizer on the dataset.
 if not os.path.exists(vocab_file) or not os.path.exists(merges_file):
@@ -78,12 +79,14 @@ if not os.path.exists(vocab_file) or not os.path.exists(merges_file):
     print("Training new BPE tokenizer...")
     tokenizer = ByteLevelBPETokenizer()
     # You can adjust vocab_size as needed; GPT-2 used 50,257 tokens by default.
-    tokenizer.train(files=[data_file], vocab_size=50257, min_frequency=2, special_tokens=["<|pad|>", "<|unk|>", "<|bos|>", "<|eos|>"])
+    tokenizer.train(files=[data_file], vocab_size=50257, min_frequency=2, special_tokens=special_tokens)
     tokenizer.save_model(bpe_dir)
     print(f"Tokenizer saved to {bpe_dir}.")
 else:
     print("Loading existing BPE tokenizer...")
     tokenizer = ByteLevelBPETokenizer(vocab_file, merges_file)
+    # The saved files do not mark the special tokens as special, so register them again
+    tokenizer.add_special_tokens(special_tokens)
 
 # Get the vocabulary size from the tokenizer
 vocab_size = tokenizer.get_vocab_size()
